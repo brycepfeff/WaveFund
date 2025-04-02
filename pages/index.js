@@ -1,18 +1,21 @@
 // File: frontend/pages/index.js
+import Head from "next/head";
 import { useEffect, useState } from "react";
 import * as anchor from "@project-serum/anchor";
 import { Connection, PublicKey } from "@solana/web3.js";
 
-// Sample valid public key (for testing only).
+// For testing purposes, we use a sample valid public key.
 // Replace these with your actual deployed program and account addresses.
-const PROGRAM_ID = new PublicKey("5eykt4UsFv8P8NJdTREpLw6jkQAN8SK1f4qR4QGgjKcS");
-const NETWORK = "https://api.devnet.solana.com";
+const SAMPLE_PUBLIC_KEY = "5eykt4UsFv8P8NJdTREpLw6jkQAN8SK1f4qR4QGgjKcS";
+
+const PROGRAM_ID = new PublicKey(SAMPLE_PUBLIC_KEY);
+const NETWORK = "https://api.mainnet-beta.solana.com"; // Mainnet
 
 export default function Home() {
   const [provider, setProvider] = useState(null);
   const [contribution, setContribution] = useState("");
 
-  // Connect to the Phantom wallet and initialize the Anchor provider.
+  // Connect to Phantom wallet and initialize the Anchor provider.
   useEffect(() => {
     const initProvider = async () => {
       if (window.solana && window.solana.isPhantom) {
@@ -31,11 +34,11 @@ export default function Home() {
     initProvider();
   }, []);
 
-  // Function to call the contribute instruction on your smart contract.
+  // Function to call your smart contract's "contribute" instruction.
   const handleContribute = async () => {
     if (!provider) return;
 
-    // Sample IDL; replace with your actual generated IDL when available.
+    // Sample IDL; replace with your actual IDL when available.
     const idl = {
       version: "0.0.1",
       name: "wavefund_project",
@@ -57,10 +60,10 @@ export default function Home() {
     const program = new anchor.Program(idl, PROGRAM_ID, provider);
 
     try {
-      // Replace these placeholders with your actual valid public keys.
-      const poolPublicKey = new PublicKey("5eykt4UsFv8P8NJdTREpLw6jkQAN8SK1f4qR4QGgjKcS");
-      const lpMintPublicKey = new PublicKey("5eykt4UsFv8P8NJdTREpLw6jkQAN8SK1f4qR4QGgjKcS");
-      const investorTokenAccount = new PublicKey("5eykt4UsFv8P8NJdTREpLw6jkQAN8SK1f4qR4QGgjKcS");
+      // Replace these with your actual valid public keys.
+      const poolPublicKey = new PublicKey(SAMPLE_PUBLIC_KEY);
+      const lpMintPublicKey = new PublicKey(SAMPLE_PUBLIC_KEY);
+      const investorTokenAccount = new PublicKey(SAMPLE_PUBLIC_KEY);
 
       const contributionAmount = new anchor.BN(contribution);
 
@@ -81,15 +84,75 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>WaveFund</h1>
-      <input
-        type="text"
-        placeholder="Contribution amount (in lamports)"
-        value={contribution}
-        onChange={(e) => setContribution(e.target.value)}
-      />
-      <button onClick={handleContribute}>Contribute</button>
+    <div className="container">
+      <Head>
+        <title>WaveFund</title>
+        <meta name="description" content="Decentralized Crowdfunding Liquidity Protocol on Solana Mainnet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <main className="main">
+        <h1>WaveFund</h1>
+        <p>Decentralized Crowdfunding on Solana Mainnet</p>
+        <input
+          type="number"
+          placeholder="Contribution amount (in lamports)"
+          value={contribution}
+          onChange={(e) => setContribution(e.target.value)}
+        />
+        <button onClick={handleContribute}>Contribute</button>
+      </main>
+      <style jsx>{`
+        .container {
+          min-height: 100vh;
+          padding: 0 1rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: #121212;
+          color: #e0e0e0;
+          font-family: 'Manrope', sans-serif;
+        }
+        .main {
+          padding: 3rem 0;
+          text-align: center;
+        }
+        h1 {
+          font-size: 4rem;
+          margin: 0;
+        }
+        p {
+          font-size: 1.5rem;
+          margin: 1rem 0 2rem;
+        }
+        input {
+          padding: 0.75rem 1rem;
+          font-size: 1rem;
+          border: 2px solid #333;
+          background: transparent;
+          color: #e0e0e0;
+          border-radius: 5px;
+          margin-bottom: 1.5rem;
+          width: 300px;
+          text-align: center;
+        }
+        button {
+          padding: 0.75rem 1.5rem;
+          font-size: 1.25rem;
+          background-color: #6366f1;
+          border: none;
+          border-radius: 5px;
+          color: #fff;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+        button:hover {
+          background-color: #4f46e5;
+        }
+      `}</style>
     </div>
   );
 }
